@@ -1,6 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const db = require("../../db/connection");
+const table = require("console.table");
 const inputCheck = require("../../utils/inputCheck");
 
 // Get all employee
@@ -60,7 +61,6 @@ router.post("/employee", ({ body }, res) => {
 });
 
 // Update employee's info:
-
 router.put("/employee/:id", (req, res) => {
    // Data validation
    const errors = inputCheck(req.body, "role_id");

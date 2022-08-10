@@ -1,9 +1,11 @@
 const express = require("express");
 const router = express.Router();
 const db = require("../../db/connection");
+const table = require("console.table");
 const inputCheck = require("../../utils/inputCheck");
 
 // Get all department
+
 router.get("/department", (req, res) => {
    const sql = "SELECT * FROM department";
    db.query(sql, (err, rows) => {
