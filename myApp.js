@@ -3,6 +3,7 @@ const fs = require("fs");
 const inquirer = require("inquirer");
 const cTable = require("console.table");
 const db = require("./db/connection");
+const { get } = require("http");
 
 const selectMenu = [
    {
@@ -31,6 +32,18 @@ function getRole() {
    });
    return empRoles;
 }
+
+let empNames = [];
+function getEmp() {
+   db.query("SELECT employee.first_name, employee.last_name FROM employee;", function (err, res) {
+      if (err) throw err;
+      for (let i = 0; i < res.length; i++) {
+         empNames.push(res[i].first_name);
+      }
+   });
+   return empNames;
+}
+
 let empManagers = [];
 function getManager() {
    db.query("SELECT first_name, last_name FROM employee WHERE manager_id IS NULL;", function (err, res) {
@@ -69,7 +82,22 @@ const empInfo = [
    },
 ];
 
-const role = [
+const updateEmpRole = [
+   {
+      type: "list",
+      name: "employee",
+      message: "Chose employee's name to update the role?",
+      choices: getEmp(),
+   },
+   {
+      type: "list",
+      name: "role",
+      message: "Which role do you want to assign the selected employee?",
+      choices: getRole(),
+   },
+];
+
+const empRole = [
    {
       type: "input",
       name: "title",
@@ -84,7 +112,7 @@ const role = [
       type: "list",
       name: "department",
       message: "Which department does the role belong to?",
-      choices: ["Engineer", "HR", "IT"],
+      choices: getRole(),
    },
 ];
 
@@ -95,6 +123,7 @@ const department = [
       message: "What is the department?",
    },
 ];
+
 // Start app
 function start_app() {
    console.log("\t\t Main Menu \n====================================");
@@ -115,6 +144,8 @@ function start_app() {
          addRole();
       } else if (selection === "Add Department") {
          addDepartment();
+      } else if (selection === "Update Employee") {
+         updateEmp();
       }
    });
 }
@@ -146,6 +177,7 @@ function viewAllDepartment() {
    });
 }
 
+// Add new employee
 function addEmployee() {
    console.log("\t\t Add Employee \n====================================");
    inquirer.prompt(empInfo).then((newEmp) => {
@@ -168,13 +200,40 @@ function addEmployee() {
    });
 }
 
+// Update employee role
+function updateEmp() {
+   console.log("\t\t Update Role \n====================================");
+   inquirer.prompt(updateEmpRole).then((newUpdateRole) => {
+      let roleID = getRole().indexOf(newUpdateRole.role) + 1;
+      let empID = getEmp().indexOf(newUpdateRole.employee);
+
+      console.log("value of emp:" + empID);
+      db.query(
+         `UPDATE employee SET WHERE ?`,
+         {
+            role_id: roleID,
+         },
+
+         { first_name: empNames[empID] },
+         console.log("first_name :    " + empNames[empID]),
+         function (err) {
+            if (err) throw err;
+            console.table(newUpdateRole);
+            start_app();
+         }
+      );
+   });
+}
+
+// Add new role
 function addRole() {
    console.log("\t\t Add Role \n====================================");
-   inquirer.prompt(role).then((newRole) => {
+   inquirer.prompt(empRole).then((newRole) => {
       start_app();
    });
 }
 
+// add new department
 function addDepartment() {
    console.log("\t\t Add Department \n====================================");
    inquirer.prompt(department).then((newDepartment) => {
@@ -183,4 +242,3 @@ function addDepartment() {
 }
 
 start_app();
-//module.exports = start_app();
