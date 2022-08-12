@@ -205,17 +205,14 @@ function updateEmp() {
    console.log("\t\t Update Role \n====================================");
    inquirer.prompt(updateEmpRole).then((newUpdateRole) => {
       let roleID = getRole().indexOf(newUpdateRole.role) + 1;
-      let empID = getEmp().indexOf(newUpdateRole.employee);
+      let empID = getEmp().indexOf(newUpdateRole.employee) + 1;
 
       console.log("value of emp:" + empID);
       db.query(
-         `UPDATE employee SET WHERE ?`,
-         {
-            role_id: roleID,
-         },
+         `UPDATE employee SET role_id =? WHERE id = ?`,
 
-         { first_name: empNames[empID] },
-         console.log("first_name :    " + empNames[empID]),
+         [roleID, empID],
+
          function (err) {
             if (err) throw err;
             console.table(newUpdateRole);
