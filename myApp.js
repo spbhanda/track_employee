@@ -120,7 +120,7 @@ const department = [
    {
       type: "input",
       name: "name",
-      message: "What is the department?",
+      message: "What is the new department name?",
    },
 ];
 
@@ -200,7 +200,7 @@ function addEmployee() {
    });
 }
 
-// Update employee role
+// Update employee role NOT WORKING AT THE MOMENT
 function updateEmp() {
    console.log("\t\t Update Role \n====================================");
    inquirer.prompt(updateEmpRole).then((newUpdateRole) => {
@@ -229,7 +229,18 @@ function updateEmp() {
 function addRole() {
    console.log("\t\t Add Role \n====================================");
    inquirer.prompt(empRole).then((newRole) => {
-      start_app();
+      db.query(
+         `INSERT INTO role SET ?`,
+         {
+            name: newRole.title,
+            salary: newRole.salary,
+         },
+
+         function (err) {
+            if (err) throw err;
+            start_app();
+         }
+      );
    });
 }
 
@@ -237,7 +248,17 @@ function addRole() {
 function addDepartment() {
    console.log("\t\t Add Department \n====================================");
    inquirer.prompt(department).then((newDepartment) => {
-      start_app();
+      db.query(
+         `INSERT INTO department SET ?`,
+         {
+            name: newDepartment.name,
+         },
+
+         function (err) {
+            if (err) throw err;
+            start_app();
+         }
+      );
    });
 }
 
