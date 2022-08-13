@@ -5,6 +5,24 @@ const cTable = require("console.table");
 const db = require("./db/connection");
 // const { get } = require("http");
 
+const logo = require("asciiart-logo");
+const config = require("./package.json");
+console.log(
+   logo({
+      name: "Track Employee!",
+      lineChars: 10,
+      padding: 2,
+      margin: 3,
+      borderColor: "grey",
+      logoColor: "bold-green",
+      textColor: "green",
+   })
+      .emptyLine()
+      .right("version 1.1.000")
+      .emptyLine()
+      .render()
+);
+
 const selectMenu = [
    {
       type: "list",
@@ -32,6 +50,18 @@ function getRole() {
    });
    return empRoles;
 }
+// get department lists:
+let empDepartments = [];
+function getDepartment() {
+   db.query("SELECT * FROM department;", function (err, res) {
+      if (err) throw err;
+      for (let i = 0; i < res.length; i++) {
+         empDepartments.push(res[i].name);
+      }
+   });
+   return empDepartments;
+}
+// --------------------------------
 
 let empNames = [];
 function getEmp() {
@@ -121,6 +151,25 @@ const department = [
       type: "input",
       name: "name",
       message: "What is the new department name?",
+   },
+];
+
+const addNewRole = [
+   {
+      type: "input",
+      name: "title",
+      message: "What is the new role?",
+   },
+   {
+      type: "input",
+      name: "salary",
+      message: "What is the salary?",
+   },
+   {
+      type: "list",
+      name: "department",
+      message: "Which department does the role belong to?",
+      choices: getDepartment(),
    },
 ];
 
@@ -236,12 +285,14 @@ function updateEmp() {
 // Add new role
 function addRole() {
    console.log("\t\t Add Role \n==============================================================================");
-   inquirer.prompt(empRole).then((newRole) => {
+   inquirer.prompt(addNewRole).then((newRole) => {
+      let departmentID = getDepartment().indexOf(newRole.department) + 1;
       db.query(
          `INSERT INTO role SET ?`,
          {
-            name: newRole.title,
+            title: newRole.title,
             salary: newRole.salary,
+            department_Id: departmentID,
          },
 
          function (err) {
