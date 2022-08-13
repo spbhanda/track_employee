@@ -3,7 +3,7 @@ const fs = require("fs");
 const inquirer = require("inquirer");
 const cTable = require("console.table");
 const db = require("./db/connection");
-const { get } = require("http");
+// const { get } = require("http");
 
 const selectMenu = [
    {
@@ -126,7 +126,7 @@ const department = [
 
 // Start app
 function start_app() {
-   console.log("\t\t Main Menu \n====================================");
+   console.log("\t\t Main Menu \n=============================================================================");
    inquirer.prompt(selectMenu).then((mainMenu) => {
       let selection = mainMenu.startMenu;
       if (selection === "View All Employee") {
@@ -152,20 +152,31 @@ function start_app() {
 
 // View employee
 function viewAllEmp() {
-   db.query("SELECT * FROM employee;", function (err, res) {
-      if (err) throw err;
-      console.table(res);
-      start_app();
-   });
+   db.query(
+      `SELECT employee.id, employee.first_name, employee.last_name, role.title, department.name AS department, role.salary, CONCAT(manager.first_name, ' ', manager.last_name) AS manager
+        FROM employee
+        LEFT JOIN employee manager on manager.id = employee.manager_id
+        INNER JOIN role ON(role.id = employee.role_id)
+        INNER JOIN department ON(department.id = role.department_id)`,
+
+      function (err, res) {
+         if (err) throw err;
+         console.table(res);
+         start_app();
+      }
+   );
 }
 
 // View All Roles
 function viewAllRole() {
-   db.query("SELECT * FROM role;", function (err, res) {
-      if (err) throw err;
-      console.table(res);
-      start_app();
-   });
+   db.query(
+      "SELECT role.id, role.title, role.salary, department.name AS department FROM role INNER JOIN department ON role.department_id=department.id",
+      function (err, res) {
+         if (err) throw err;
+         console.table(res);
+         start_app();
+      }
+   );
 }
 
 // View All Department
@@ -179,7 +190,7 @@ function viewAllDepartment() {
 
 // Add new employee
 function addEmployee() {
-   console.log("\t\t Add Employee \n====================================");
+   console.log("\t\t Add Employee \n===========================================================================");
    inquirer.prompt(empInfo).then((newEmp) => {
       let roleID = getRole().indexOf(newEmp.role) + 1;
       let mgrID = getManager().indexOf(newEmp.manager) + 1;
@@ -202,7 +213,7 @@ function addEmployee() {
 
 // Update employee role NOT WORKING AT THE MOMENT
 function updateEmp() {
-   console.log("\t\t Update Role \n====================================");
+   console.log("\t\t Update Role \n===========================================================================");
    inquirer.prompt(updateEmpRole).then((newUpdateRole) => {
       let roleID = getRole().indexOf(newUpdateRole.role) + 1;
       let empID = getEmp().indexOf(newUpdateRole.employee) + 1;
@@ -224,7 +235,7 @@ function updateEmp() {
 
 // Add new role
 function addRole() {
-   console.log("\t\t Add Role \n====================================");
+   console.log("\t\t Add Role \n==============================================================================");
    inquirer.prompt(empRole).then((newRole) => {
       db.query(
          `INSERT INTO role SET ?`,
@@ -243,7 +254,7 @@ function addRole() {
 
 // add new department
 function addDepartment() {
-   console.log("\t\t Add Department \n====================================");
+   console.log("\t\t Add Department \n==========================================================================");
    inquirer.prompt(department).then((newDepartment) => {
       db.query(
          `INSERT INTO department SET ?`,
