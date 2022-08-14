@@ -18,9 +18,9 @@ One can clone the repository from github and download the file. Please make sure
 
 MIT
 
-## Demontration Video:
+## Demontration Video Link:
 
-![](https://drive.google.com/file/d/1V6pp55R6zXEDAwgvE-XgMgxXmPTVlkF-/view?usp=sharing)
+https://drive.google.com/file/d/1V6pp55R6zXEDAwgvE-XgMgxXmPTVlkF-/view?usp=sharing
 
 ## Webpage Snapshot:
 
