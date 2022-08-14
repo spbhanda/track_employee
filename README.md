@@ -20,7 +20,7 @@ MIT
 
 ## Demontration Video:
 
-[](../../../Downloads/genrt_emplyee_profle.mp4)
+![](https://drive.google.com/file/d/1V6pp55R6zXEDAwgvE-XgMgxXmPTVlkF-/view?usp=sharing)
 
 ## Webpage Snapshot:
 
